@@ -12,11 +12,30 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
-#[cfg(tests)]
-mod test {
+/// A project allows you to group together a set of environments with the
+/// objective to run the same application.
+pub struct Project {
+    name: String
+}
+
+impl Project {
+    pub fn new<S: Into<String>>(name: S) -> Self {
+        Self {name: name.into()}
+    }
+
+    pub fn name(&self) -> &str {
+        self.name.as_str()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
 
     #[test]
-    fn simple_test() {
-        assert!(true)
+    fn project_new() {
+        let name = "myproject";
+        let p = Project::new(name);
+        assert_eq!(p.name(), name);
     }
 }
