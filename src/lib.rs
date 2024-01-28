@@ -12,6 +12,8 @@
 // ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
 // OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
+use std::path::Path;
+
 /// A project allows you to group together a set of environments with the
 /// objective to run the same application.
 pub struct Project {
@@ -79,11 +81,28 @@ impl Application {
     pub fn name(&self) -> &str {
         self.name.as_str()
     }
+
+    pub fn from_path(p: &Path) -> Self {
+        let name = get_name_on_path(p);
+        Self::new(name)
+    }
+}
+
+fn get_name_on_path(p: &Path) -> &str {
+    p.file_name().unwrap().to_str().unwrap()
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn application_from_path() {
+        let name = "python-flask-docker";
+        let path = Path::new("../../").join(name);
+        let a = Application::from_path(&path);
+        assert_eq!(a.name(), name);
+    }
 
     #[test]
     fn environment_new() {
