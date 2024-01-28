@@ -15,12 +15,51 @@
 /// A project allows you to group together a set of environments with the
 /// objective to run the same application.
 pub struct Project {
-    name: String
+    name: String,
+    envs: Option<Vec<Environment>>,
 }
 
 impl Project {
     pub fn new<S: Into<String>>(name: S) -> Self {
-        Self {name: name.into()}
+        Self { name: name.into(), envs: None }
+    }
+
+    pub fn name(&self) -> &str {
+        self.name.as_str()
+    }
+
+    pub fn envs(&self) -> Option<&Vec<Environment>> {
+        self.envs.as_ref()
+    }
+
+    pub fn has_env(&self) -> bool {
+        self.envs.is_some()
+    }
+
+    pub fn push_env(&mut self, e: Environment) {
+        if let Some(ref mut envs) = self.envs {
+            envs.push(e);
+        } else {
+            self.envs = Some(vec![e]);
+        }
+    }
+
+    pub fn count_envs(&self) -> usize {
+        if self.has_env() {
+            self.envs().unwrap().len()
+        } else {
+            0
+        }
+    }
+}
+
+pub struct Environment {
+    name: String,
+}
+
+impl Environment {
+    pub fn new<S: Into<String>>(name: S) -> Self {
+        Self { name: name.into() }
     }
 
     pub fn name(&self) -> &str {
@@ -37,5 +76,21 @@ mod tests {
         let name = "myproject";
         let p = Project::new(name);
         assert_eq!(p.name(), name);
+    }
+
+    #[test]
+    fn project_new_environment() {
+        let p_name = "myproject";
+        let e_name = "prod";
+        let e = Environment::new(e_name);
+        assert_eq!(e.name(), e_name);
+
+        let mut p = Project::new(p_name);
+        assert!(!p.has_env());
+        assert_eq!(p.count_envs(), 0);
+
+        p.push_env(e);
+        assert!(p.has_env());
+        assert_eq!(p.count_envs(), 1);
     }
 }
