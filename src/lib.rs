@@ -67,9 +67,30 @@ impl Environment {
     }
 }
 
+pub struct Application {
+    name: String,
+}
+
+impl Application {
+    pub fn new<S: Into<String>>(name: S) -> Self {
+        Self { name: name.into() }
+    }
+
+    pub fn name(&self) -> &str {
+        self.name.as_str()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn environment_new() {
+        let name = "prod";
+        let e = Environment::new(name);
+        assert_eq!(e.name(), name);
+    }
 
     #[test]
     fn project_new() {
